@@ -1,9 +1,4 @@
-body {
-    background-color: #161819;
-    margin: 0;
-    font-family: Arial, Helvetica, sans-serif;
-}
-
+/*TODO Удалить header и сделать вместо него side-nav*/
 .header {
     background-color: #12161e;
     height: 100px;
