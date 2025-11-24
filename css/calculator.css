@@ -18,8 +18,47 @@ main {
 .input-calculator {
     border: 0;
     padding: 10px 20px 10px 20px;
-    width: 600px;
+    width: 800px;
     border-radius: 3px;
+}
+
+.file-input {
+  position: absolute;
+  z-index: -1;
+  opacity: 0;
+}
+
+.file-label {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer; 
+  transition: background-color 0.3s;
+
+  &:hover {
+    background-color: #0056b3;
+  }
+}
+
+.file-upload {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: 10px;
+}
+
+.file-name {
+    color: white;
+}
+
+.input-calculator-number {
+    border: 0;
+    padding: 10px 20px 10px 20px;
+    width: 200px;
+    border-radius: 3px;
+    margin-right: 10px;
 }
 
 .button-calculate {
@@ -30,9 +69,10 @@ main {
     font-weight: bold;
     margin-left: 30px;
     padding: 20px 20px 20px 20px;
+    transition: background-color 0.3s;
 
     &:hover {
-        opacity: 70%;
+        background-color: rgba(0, 128, 0, 0.671);
     }
 
     &:active {
@@ -40,9 +80,24 @@ main {
     }
 }
 
+.statistics-container {
+    display: grid;
+    border: white solid 3px;
+    margin-top: 20px;
+    justify-content: center;
+    align-items: center;
+}
+
+.income {
+    color: green;
+}
+
+.expenses {
+    color: red;
+}
+
 .history-container {
     color: white;
-    height: 500px;
     width: 770px;
     margin-top: 30px;
 }
@@ -50,8 +105,9 @@ main {
 .history {
     border: solid 3px white;
     padding: 20px;
-    color: green;
 }
+
+
 
 footer {
     margin-top: 540px; /*ЭТО УБРАТЬ ПОТОМ*/

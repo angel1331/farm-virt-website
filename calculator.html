@@ -13,7 +13,7 @@
             <div class="left-side">
                 <div class="logo-container">
                     <a href="index.html">
-                        <img class="logo" src="https://gta5rp.com/_next/image?url=%2Fimages%2Flogo%2Fmain.png&w=1920&q=100" alt="logo">
+                        <img class="logo" src="/img/logo-prototype-1.png" alt="logo">
                     </a>
                 </div>
             </div>
@@ -39,11 +39,26 @@
     </header>
     <main>
         <div class="calculator">
-            <input type="number" placeholder="Введите число" class="input-calculator">
+            <input type="number" placeholder="0" class="input-calculator-number">
+            <input placeholder="Комментарий" class="input-calculator">
+            <div class="file-upload">
+                <input type="file" id="real-input" class="file-input"/>
+                <label for="real-input" class="file-label">
+                    Выберите файл
+                </label>
+                <span class="file-name">Файл не выбран</span>
+            </div>
             <button class="button-calculate">Записать</button>
+        </div>
+        <div class="statistics-container">
+            <div class="income">
+            </div>
+            <div class="expenses">
+            </div>
         </div>
         <div class="history-container">
         </div>
+
     </main>
     <footer>
         <div class="сopyright">©angel. Все права защищены. 2025-2026</div>
