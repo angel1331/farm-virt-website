@@ -6,33 +6,62 @@ document.querySelector('.button-calculate').addEventListener('click', () => {
     const inputComments = document.querySelector('.input-calculator');
     const inputValue = Number(input.value);
     const inputCommentsValue = inputComments.value;
+    const inputImage = document.getElementById('real-input');
 
     const history = document.querySelector('.history-container');
 
     const incomeStat = document.querySelector('.income');
     const expensesStat = document.querySelector('.expenses');
 
-    if(inputValue < 0) {
-        history.innerHTML += `
-        <p class="history" style="color: red">${inputValue} ${inputCommentsValue}</p>
-        `
-        expenses += inputValue;
-    } else {
-        history.innerHTML += `
-        <p class="history" style="color: green">+$${inputValue} ${inputCommentsValue}</p>
-        `
-        income += inputValue;
+    const files = inputImage.files;
+    
+    let imageUrl = '';
+
+    if (files.length > 0 && files[0].type.startsWith('image/')) {
+        imageUrl = URL.createObjectURL(files[0]);
     }
 
+    let historyHTML = '';
+
+    if(inputValue < 0) {
+        expenses += inputValue;
+        
+        historyHTML = `
+            <div class="history-item">
+                ${imageUrl ? `<img src="${imageUrl}" style="width: 50px; height: 50px; margin-right: 10px;">` : ''}
+                <p style="color: red">${inputValue}</p>
+                <p style="margin-left: 5px;>${inputCommentsValue}</p>
+            </div>
+        `
+    } else {
+        income += inputValue;
+
+        historyHTML = `
+            <div class="history-item">
+                ${imageUrl ? `<img src="${imageUrl}" style="width: 50px; height: 50px; margin-right: 10px;">` : ''}
+                <p style="color: green">+$${inputValue}</p>
+                <p style="margin-left: 5px;">${inputCommentsValue}</p>
+            </div>
+        `
+    }
+
+    history.innerHTML += historyHTML;
+
     incomeStat.innerHTML = `
-    <p>${income}</p>
+    <p>+${income}</p>
     `
     expensesStat.innerHTML = `
     <p>${expenses}</p>
     `
 
+    const imagePreview = document.getElementById('imagePreview')
+
+
+
     input.value = '';
     inputComments.value = '';
+    inputImage.value = '';
+    document.querySelector('.file-name').textContent = 'Файл не выбран';
 })
 
 document.getElementById('real-input').addEventListener('change', (e) => {

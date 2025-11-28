@@ -81,28 +81,49 @@ main {
 }
 
 .statistics-container {
-    display: grid;
-    border: white solid 3px;
+    border: white solid 2px;
     margin-top: 20px;
-    justify-content: center;
-    align-items: center;
+    padding: 10px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    justify-items: center;
+}
+
+.stat-display {
+    display: grid;
+    grid-template-columns: 1fr 1fr; 
+    gap: 20px;
+}
+
+.stat-item {
+    display: flex;
+    gap: 10px;
+}
+
+.stat-text-label {
+    color: white;
 }
 
 .income {
     color: green;
+    font-weight: bold;
 }
 
 .expenses {
     color: red;
+    font-weight: bold;
 }
 
 .history-container {
     color: white;
-    width: 770px;
+
     margin-top: 30px;
 }
 
-.history {
+.history-item {
+    display: flex;
+    align-items: center;
     border: solid 3px white;
     padding: 20px;
 }
