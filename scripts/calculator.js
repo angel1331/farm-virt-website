@@ -1,74 +1,98 @@
-let income = 0;
-let expenses = 0;
+    let income = Number(localStorage.getItem('income') ?? 0);
+    let expenses = Number(localStorage.getItem('expenses') ?? 0);
 
-document.querySelector('.button-calculate').addEventListener('click', () => {
-    const input = document.querySelector('.input-calculator-number');
-    const inputComments = document.querySelector('.input-calculator');
-    const inputValue = Number(input.value);
-    const inputCommentsValue = inputComments.value;
-    const inputImage = document.getElementById('real-input');
+    let historyRecords = JSON.parse(localStorage.getItem('historyRecords')) || [];
 
-    const history = document.querySelector('.history-container');
-
-    const incomeStat = document.querySelector('.income');
-    const expensesStat = document.querySelector('.expenses');
-
-    const files = inputImage.files;
-    
-    let imageUrl = '';
-
-    if (files.length > 0 && files[0].type.startsWith('image/')) {
-        imageUrl = URL.createObjectURL(files[0]);
+    function saveToStorage() {
+        localStorage.setItem('income', income);
+        localStorage.setItem('expenses', expenses);
+        localStorage.setItem('historyRecords', JSON.stringify(historyRecords));
     }
 
-    let historyHTML = '';
+    function renderPage () {
+        const incomeStat = document.querySelector('.income');
+        const expensesStat = document.querySelector('.expenses');
+        const history = document.querySelector('.history-container');
 
-    if(inputValue < 0) {
-        expenses += inputValue;
+        let historyHTML = '';
+
+        historyRecords.forEach(record => {
+            const valueDisplay = record.type === 'expense' ?
+            `<p style="color:red">${record.value}</p>` :
+            `<p style="color:green">+${record.value}</p>`
+            
+            const imageHTML = record.imageUrl ?
+            `<img src="${record.imageUrl}" style="width: auto; height: 50px; margin-right: 10px;">` : '';
+
+            historyHTML += `
+                <div class="history-item">
+                    ${imageHTML}
+                    ${valueDisplay}
+                    <p style="margin-left: 5px;">${record.comment}</p>
+                </div>
+            `;
+
+        });
+
+        if (history) {
+            history.innerHTML = historyHTML;
+        }
+
+        if (incomeStat && expensesStat) {
+            incomeStat.innerHTML = `<p>+$${income}</p>`;
+            expensesStat.innerHTML = `<p>${expenses}</p>`;
+        }
+    }
+
+    renderPage();
+
+    document.querySelector('.button-calculate').addEventListener('click', () => {
+        const input = document.querySelector('.input-calculator-number');
+        const inputComments = document.querySelector('.input-calculator');
+        const inputValue = Number(input.value);
+        const inputCommentsValue = inputComments.value;
+        const inputImage = document.getElementById('real-input');
+
+        const files = inputImage.files;
         
-        historyHTML = `
-            <div class="history-item">
-                ${imageUrl ? `<img src="${imageUrl}" style="width: 50px; height: 50px; margin-right: 10px;">` : ''}
-                <p style="color: red">${inputValue}</p>
-                <p style="margin-left: 5px;>${inputCommentsValue}</p>
-            </div>
-        `
-    } else {
-        income += inputValue;
+        let imageUrl = '';
+        
+        if (files.length > 0 && files[0].type.startsWith('image/')) {
+            imageUrl = URL.createObjectURL(files[0]);
+        }
 
-        historyHTML = `
-            <div class="history-item">
-                ${imageUrl ? `<img src="${imageUrl}" style="width: 50px; height: 50px; margin-right: 10px;">` : ''}
-                <p style="color: green">+$${inputValue}</p>
-                <p style="margin-left: 5px;">${inputCommentsValue}</p>
-            </div>
-        `
-    }
+        const record = {
+            value: inputValue,
+            comment: inputCommentsValue,
+            imageUrl: imageUrl,
+            type: inputValue < 0 ? 'expense' : 'income'
+        }
 
-    history.innerHTML += historyHTML;
+        historyRecords.push(record);
 
-    incomeStat.innerHTML = `
-    <p>+${income}</p>
-    `
-    expensesStat.innerHTML = `
-    <p>${expenses}</p>
-    `
+        if (inputValue < 0) {
+            expenses += inputValue;
+        } else {
+            income += inputValue;
+        }
 
-    const imagePreview = document.getElementById('imagePreview')
+        renderPage();
 
+        const imagePreview = document.getElementById('imagePreview')
 
+        input.value = '';
+        inputComments.value = '';
+        inputImage.value = '';
+        document.querySelector('.file-name').textContent = 'Файл не выбран';
 
-    input.value = '';
-    inputComments.value = '';
-    inputImage.value = '';
-    document.querySelector('.file-name').textContent = 'Файл не выбран';
-})
+        saveToStorage();
+    })
 
-document.getElementById('real-input').addEventListener('change', (e) => {
-    const fileNameDisplay = document.querySelector('.file-name');
-    if (e.target.files && e.target.files.length > 0) {
-        fileNameDisplay.textContent = e.target.files[0].name;
-    } else {
-        fileNameDisplay.textContent = 'Файл не выбран';
-    }
-})
+    document.getElementById('real-input').addEventListener('change', (e) => {
+        const fileNameDisplay = document.querySelector('.file-name');
+        if (e.target.files && e.target.files.length > 0) {
+            fileNameDisplay.textContent = e.target.files[0].name;
+        } else {
+            fileNameDisplay.textContent = 'Файл не выбран';
+        }
+    })
