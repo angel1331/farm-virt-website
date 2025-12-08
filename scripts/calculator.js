@@ -138,7 +138,7 @@
                 <div class="history-item">
                     ${imageHTML}
                     ${valueDisplay}
-                    <p style="margin-left: 5px;">${record.comment}</p>
+                    <p class="comment" style="margin-left: 5px;">${record.comment}</p>
                     <div class="button-container">
                         <button class="edit-btn" data-id="${record.id}">Редактировать запись</button>
                         <button class="delete-btn" data-id="${record.id}">Удалить запись</button>
@@ -224,6 +224,7 @@
         const imagePreview = document.getElementById('imagePreview')
 
         finalValue.value = '';
+        inputNumber.value = '';
         inputComments.value = '';
         inputImage.value = '';
         document.querySelector('.file-name').textContent = 'Файл не выбран';
