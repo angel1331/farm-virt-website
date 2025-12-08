@@ -153,7 +153,7 @@
 
         if (incomeStat && expensesStat) {
             incomeStat.innerHTML = `<p>+$${income}</p>`;
-            expensesStat.innerHTML = `<p>${expenses}</p>`;
+            expensesStat.innerHTML = `<p>-$${Math.abs(expenses)}</p>`;
         }
 
         const deleteButtons = document.querySelectorAll('.delete-btn');
@@ -203,7 +203,7 @@
             finalValue = inputNumberValue;
 
             const record = {
-                value: inputValue,
+                value: finalValue,
                 id: generateUUID(),
                 comment: inputCommentsValue,
                 imageUrl: imageUrl,
@@ -212,10 +212,10 @@
 
             historyRecords.push(record);
 
-            if (inputValue < 0) {
-            expenses += inputValue;
+            if (finalValue < 0) {
+            expenses += finalValue;
             } else {
-                income += inputValue;
+                income += finalValue;
             }
         }
 
@@ -223,7 +223,7 @@
 
         const imagePreview = document.getElementById('imagePreview')
 
-        input.value = '';
+        finalValue.value = '';
         inputComments.value = '';
         inputImage.value = '';
         document.querySelector('.file-name').textContent = 'Файл не выбран';
