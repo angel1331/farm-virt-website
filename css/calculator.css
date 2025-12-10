@@ -81,7 +81,8 @@ main {
 }
 
 .statistics-container {
-    border: white solid 2px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 5px;
     margin-top: 20px;
     padding: 10px;
     display: grid;
@@ -123,7 +124,8 @@ main {
 .history-item {
     display: flex;
     align-items: center;
-    border: solid 3px white;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 5px;
     padding: 20px;
     margin-top: 20px;
 }
