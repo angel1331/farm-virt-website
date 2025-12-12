@@ -127,6 +127,10 @@
         let historyHTML = '';
 
         historyRecords.forEach(record => {
+            const borderClass = record.type === 'expense' ? 'red-border' : 'green-border';
+
+            const colorStyle = record.type === 'expense' ? 'red' : 'green';
+
             const valueDisplay = record.type === 'expense' ?
             `<p style="color:red">${record.value}</p>` :
             `<p style="color:green">+${record.value}</p>`
@@ -135,7 +139,7 @@
             `<img src="${record.imageUrl}" style="width: auto; height: 50px; margin-right: 10px;">` : '';
 
             historyHTML += `
-                <div class="history-item">
+                <div class="history-item ${borderClass}">
                     ${imageHTML}
                     ${valueDisplay}
                     <p class="comment" style="margin-left: 5px;">${record.comment}</p>
@@ -145,6 +149,8 @@
                     </div>
                 </div>
             `;
+
+            const historyItem = document.querySelectorAll('.history-item');
         });
 
         if (history) {
