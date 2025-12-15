@@ -122,6 +122,7 @@
     function renderPage() {
         const incomeStat = document.querySelector('.income');
         const expensesStat = document.querySelector('.expenses');
+        const cleanIncomeExpensesStat = document.querySelector('.clean-income-expenses');
         const history = document.querySelector('.history-container');
 
         let historyHTML = '';
@@ -157,9 +158,15 @@
             history.innerHTML = historyHTML;
         }
 
-        if (incomeStat && expensesStat) {
+        if (incomeStat && expensesStat && cleanIncomeExpensesStat) {
+            const netValue = income + expenses;
+
+            const netValueSign = netValue >= 0 ? '+$' : '-$';
+            const netValueColor = netValue >= 0 ? 'green' : 'red';
+
             incomeStat.innerHTML = `<p>+$${income}</p>`;
             expensesStat.innerHTML = `<p>-$${Math.abs(expenses)}</p>`;
+            cleanIncomeExpensesStat.innerHTML = `<p style="color: ${netValueColor};">${netValueSign}${Math.abs(netValue)}</p>`
         }
 
         const deleteButtons = document.querySelectorAll('.delete-btn');

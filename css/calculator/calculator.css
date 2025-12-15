@@ -94,7 +94,7 @@ main {
     margin-top: 20px;
     padding: 10px;
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr;
     gap: 20px;
     justify-items: center;
 }
@@ -128,11 +128,17 @@ main {
 .income {
     color: green;
     font-weight: bold;
-    font-size: 18px;
+    font-size: 20px;
 }
 
 .expenses {
     color: red;
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.clean-income-expenses {
+    color: white;
     font-weight: bold;
     font-size: 20px;
 }
