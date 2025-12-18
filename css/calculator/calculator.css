@@ -152,19 +152,25 @@ main {
     display: flex;
     align-items: center;
     border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 5px;
+    border-radius: 8px;
     padding: 20px;
     margin-top: 20px;
+    justify-content: space-between;
+
+    &:hover{
+        transform: translateX(5px);
+    }
 }
 
-.comment {
-    width: 900px;
+.comment-container{
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .button-container {
     display: flex;
     justify-content: right;
-    width: 1300px;
 }
 
 .delete-btn {

@@ -5,6 +5,17 @@
 
     let editingRecordId = null; 
 
+    function getCurrentDateTime() {
+        const today = new Date();
+        const day = String(today.getDate()).padStart(2, '0');
+        const month = String(today.getMonth() + 1).padStart(2, '0');
+        const year = today.getFullYear();
+        const hour = String(today.getHours()).padStart(2, '0');
+        const minutes = String(today.getMinutes()).padStart(2, '0');
+        return `${day}/${month}/${year} ${hour}:${minutes}`;
+    }
+
+
     const getInputs = () => ({
         inputNumber: document.querySelector('.input-calculator-number'),
         inputComments: document.querySelector('.input-calculator'),
@@ -107,7 +118,8 @@
             value: finalNewValue,
             comment: newComment,
             imageUrl: newImageUrl,
-            type: finalNewValue < 0 ? 'expense' : 'income'
+            type: finalNewValue < 0 ? 'expense' : 'income',
+            date: getCurrentDateTime()
         }
 
         historyRecords[index] = newRecord;
@@ -143,7 +155,10 @@
                 <div class="history-item ${borderClass}">
                     ${imageHTML}
                     ${valueDisplay}
-                    <p class="comment" style="margin-left: 5px;">${record.comment}</p>
+                    <div class="comment-container">
+                        <span class="comment" style="margin-left: 5px;">${record.comment || "Без комментария"}</span>
+                    </div>
+                    <p class="date-history">${record.date}</p>
                     <div class="button-container">
                         <button class="edit-btn" data-id="${record.id}">Редактировать запись</button>
                         <button class="delete-btn" data-id="${record.id}">Удалить запись</button>
@@ -220,7 +235,8 @@
                 id: generateUUID(),
                 comment: inputCommentsValue,
                 imageUrl: imageUrl,
-                type: finalValue < 0 ? 'expense' : 'income'
+                type: finalValue < 0 ? 'expense' : 'income',
+                date: getCurrentDateTime()
             };
 
             historyRecords.push(record);
