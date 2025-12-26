@@ -10,6 +10,12 @@ const timerStates = {
     '3': { totalSeconds: INITIAL_TIMES['3'], intervalId: null },
 };
 
+let toDoList = JSON.parse(localStorage.getItem('toDoList')) || [];
+
+function saveToStorage() {
+    localStorage.setItem('toDoList', JSON.stringify(toDoList));
+}
+
 function getDisplayElements(id) {
     return {
         hoursEl: document.getElementById(`hours-${id}`),
@@ -36,6 +42,17 @@ function updateDisplay(id) {
     if (elements.secondsEl) elements.secondsEl.textContent = String(seconds).padStart(2, '0');
 }
 
+function playAlarm() {
+    const audio = new Audio('assets/sounds/videoplayback.mp3');
+    audio.volume = 0.7;
+    audio.play();
+
+    setTimeout(() => {
+        audio.pause();
+        audio.currentTime = 0;
+    }, 5000);
+}
+
 function tick(id) {
     const state = timerStates[id];
 
@@ -43,6 +60,7 @@ function tick(id) {
         stopTimer(id);
         state.totalSeconds = 0;
         updateDisplay(id);
+        playAlarm();
         alert(`Время для таймера ${id} вышло!`);
         return;
     }
@@ -90,3 +108,19 @@ document.addEventListener('click', (event) => {
         resetTimer(timerId);
     }
 });
+
+document.querySelector('.to-do-add-btn').addEventListener('click', () => {
+    const inputText = document.querySelector('.to-do-input');
+    const inputDate = document.querySelector('.to-do-date-input');
+    const tasksContainer = document.querySelector('.tasks');
+    const inputTextValue = inputText.value;
+    const inputDateValue = inputDate.value;
+
+    let toDoListHTML = '';
+    
+    toDoListHTML += `
+        <p class="task">${inputTextValue} ${inputDateValue} <input class="checkbox" type="checkbox"><button class="delete-task-btn">Удалить</button></p>
+    `
+    
+    tasksContainer.innerHTML += toDoListHTML;
+})

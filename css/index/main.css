@@ -110,3 +110,84 @@ main {
         cursor: pointer;
     }
 }
+
+.to-do-list-container {
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 5px;
+    margin-top: 100px;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.to-do-list {
+    max-width: 500px;
+    padding: 10px;
+    display: flex;
+}
+
+.to-do-title {
+    color: white;
+    max-width: 300px;
+    padding: 10px;
+    font-size: 32px;
+    margin: 0;
+}
+
+.to-do-input {
+    border: 0;
+    border-radius: 5px;
+    height: 30px;
+    width: 300px;
+}
+
+.to-do-date-input {
+    border: 0;
+    border-radius: 5px;
+    height: 30px;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.to-do-add-btn {
+    border: 0;
+    border-radius: 5px;
+    background-color: white;
+    font-size: 15px;
+    padding: 5px;
+    transition: 0.3s;
+
+    &:hover {
+        background-color: green;
+    }
+
+    &:active {
+        background-color: rgba(0, 128, 0, 0.679);
+    }
+}
+
+.tasks {
+    display: flex;
+    flex-direction: column;
+    color: white;
+    margin-left: 10px;
+}
+
+.delete-task-btn {
+    font-weight: bold;
+    border-radius: 5px;
+    margin-left: 10px;
+    padding: 10px;
+    color: white;
+    border: 0;
+    background-color: red;
+    transition: 0.3s;
+
+    &:hover {
+        background-color: rgba(255, 0, 0, 0.632);
+    }
+
+    &:active {
+        background-color: rgba(255, 0, 0, 0.428);
+    }
+}
