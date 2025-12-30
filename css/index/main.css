@@ -116,7 +116,6 @@ main {
     border-radius: 5px;
     margin-top: 100px;
     display: flex;
-    justify-content: center;
     flex-direction: column;
 }
 
@@ -166,10 +165,41 @@ main {
     }
 }
 
-.tasks {
+.tasks,
+.completed-tasks {
     display: flex;
     flex-direction: column;
     color: white;
+    margin-left: 10px;
+}
+
+.task {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    width: 98%;
+    gap: 15px;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.task-text {
+    margin-right: 20px;
+}
+
+.checkbox {
+    transform: scale(1.5);
+    cursor: pointer;
+}
+
+.completed-tasks {
+    text-decoration: line-through;
+    opacity: 0.5;
+}
+
+.to-do-task-title {
+    color: white;
+    font-weight: bold;
     margin-left: 10px;
 }
 
