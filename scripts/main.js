@@ -10,12 +10,6 @@ const timerStates = {
     '3': { totalSeconds: INITIAL_TIMES['3'], intervalId: null },
 };
 
-let toDoList = JSON.parse(localStorage.getItem('toDoList')) || [];
-
-function saveToStorage() {
-    localStorage.setItem('toDoList', JSON.stringify(toDoList));
-}
-
 function getDisplayElements(id) {
     return {
         hoursEl: document.getElementById(`hours-${id}`),
@@ -108,45 +102,3 @@ document.addEventListener('click', (event) => {
         resetTimer(timerId);
     }
 });
-
-document.querySelector('.to-do-add-btn').addEventListener('click', () => {
-    const inputText = document.querySelector('.to-do-input');
-    const inputDate = document.querySelector('.to-do-date-input');
-    const tasksContainer = document.querySelector('.tasks');
-    const inputTextValue = inputText.value;
-    const inputDateValue = inputDate.value;
-
-    if(inputTextValue === '') return;
-
-    let toDoListHTML = '';
-    
-    toDoListHTML += `
-        <div class="task"><p class="task-text">${inputTextValue}</p> <p class="task-date">${inputDateValue}</p> <input class="checkbox" type="checkbox"><button class="delete-task-btn">Удалить</button></div>
-    `    
-    tasksContainer.innerHTML += toDoListHTML;
-
-    inputText.value = '';
-    inputDate.value = '';
-})
-
-document.querySelector('.to-do-list-container').addEventListener('click', (e) => {
-    const notCompletedTasks = document.querySelector('.tasks');
-    const completedTasks = document.querySelector('.completed-tasks');
-    const currentTask = e.target.parentElement;
-
-    if(e.target.classList.contains('checkbox')){
-        if(e.target.checked) {
-            completedTasks.appendChild(currentTask);
-        } else {
-            notCompletedTasks.appendChild(currentTask);
-        }
-    }
-})
-
-document.querySelector('.tasks').addEventListener('click', (e) => {
-    const taskEl = e.target.parentElement;
-    
-    if(e.target.classList.contains('delete-task-btn')) {
-        taskEl.remove();       
-    }
-})
