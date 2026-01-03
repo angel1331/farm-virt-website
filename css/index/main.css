@@ -26,6 +26,11 @@ aside {
     flex-direction: column;
 }
 
+.auth {
+    display: flex;
+    justify-content: center;
+}
+
 .content-wrapper {
     margin-left: 280px;
     flex-grow: 1;

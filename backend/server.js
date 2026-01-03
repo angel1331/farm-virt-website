@@ -1,39 +1,50 @@
-require('dotenv').config();
-const express = require('express');
-const { Telegraf } = require('telegraf');
-const cors = require('cors');
+import { Hono } from 'hono';
+import { cors } from 'hono/cors';
 
-const app = express();
-const bot = new Telegraf(process.env.BOT_TOKEN);
+const app = new Hono();
 
-app.use(cors()); // Чтобы фронтенд мог достучаться до бэкенда
-app.use(express.json());
+app.use('*', cors());
 
-// Переменная для хранения твоего ID (пока не сделали авторизацию)
-// Напиши боту любое сообщение в ТГ, и в консоли увидишь свой ID
-let adminChatId = null;
+// Маршрут для проверки, что сервер живой
+app.get('/', (c) => c.text('Бэкенд фермы запущен!'));
 
-bot.on('text', (ctx) => {
-    adminChatId = ctx.chat.id;
-    console.log(`Твой Chat ID сохранен: ${adminChatId}`);
-    ctx.reply(`Привет! Теперь я знаю твой ID (${adminChatId}) и буду слать сюда уведомления.`);
-});
+// Роут для авторизации и уведомлений
+app.post('/auth/telegram', async (c) => {
+    const user = await c.req.json();
+    const botToken = c.env.BOT_TOKEN;
 
-// Роут (путь) для получения сигналов от таймера
-app.post('/notify', (req) => {
-    const { message } = req.body;
+    // Отправляем приветственное сообщение через Bot API напрямую
+    const text = `✅ Авторизация успешна!\nПривет, ${user.first_name}! Теперь я буду присылать уведомления о таймерах сюда.`;
     
-    if (adminChatId) {
-        bot.telegram.sendMessage(adminChatId, `⏰ ТАЙМЕР: ${message}`);
-        console.log('Уведомление отправлено в Telegram');
-    } else {
-        console.log('Ошибка: Бот еще не знает твой ID. Напиши ему что-нибудь в Telegram!');
-    }
+    await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            chat_id: user.id,
+            text: text
+        })
+    });
+
+    return c.json({ success: true, message: 'User recognized' });
 });
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`Сервер запущен на http://localhost:${PORT}`);
-    bot.launch(); // Запуск бота
-    console.log('Telegram бот готов к работе');
+// Роут для уведомлений от таймеров
+app.post('/notify', async (c) => {
+    const { userId, message } = await c.req.json();
+    const botToken = c.env.BOT_TOKEN;
+
+    if (!userId) return c.json({ success: false, error: 'No user ID' }, 400);
+
+    await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            chat_id: userId,
+            text: `⏰ ТАЙМЕР: ${message}`
+        })
+    });
+
+    return c.json({ success: true });
 });
+
+export default app;
