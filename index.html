@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="css/index/main.css">
-		<link rel="stylesheet" href="css/header.css">
+	<link rel="stylesheet" href="css/header.css">
+	<script src="scripts/auth.js"></script>
     <title>Farming Virts</title>
 </head>
 <body>
@@ -41,8 +42,12 @@
 			</div>
 		</div>
 		<div class="auth" id="telegram-auth-container">
-			<script async src="https://telegram.org/js/telegram-widget.js?22" data-telegram-login="Farm_Money_2026_bot" data-size="large" data-onauth="onTelegramAuth(user)" data-request-access="write"></script>
-			<script src="scripts/auth.js"></script>
+			<script async src="https://telegram.org/js/telegram-widget.js?22" 
+				data-telegram-login="Farm_Money_2026_bot" 
+				data-size="large" 
+				data-onauth="onTelegramAuth(user)" 
+				data-request-access="write">
+			</script>
 		</div>
     </aside>
 	<div class="content-wrapper">
@@ -98,5 +103,4 @@
 </body>
 <script type="module" src="scripts/main.js"></script>
 <script type="module" src="scripts/main-toDoList.js"></script>
-<script type="module" src="scripts/auth.js"></script>
 </html>
