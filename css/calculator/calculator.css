@@ -6,16 +6,30 @@ body {
     display: flex;
 }
 
-html {
-    height: 100%;
-}
-
 main {
     padding: 40px;
     flex-direction: column;
     flex-grow: 1;
     min-height: 100vh;
-    margin: 0;
+    display: flex;
+}
+
+aside {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100vh;
+}
+
+.aside-top {
+    display: flex;
+    flex-direction: column;
+}
+
+.auth {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 10px;
 }
 
 .content-wrapper {
