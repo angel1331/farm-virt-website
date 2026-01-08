@@ -1,3 +1,4 @@
+import { parse } from 'dotenv';
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 
@@ -39,8 +40,9 @@ app.post('/notify', async (c) => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-            chat_id: userId,
-            text: `⏰ ТАЙМЕР: ${message}`
+            chat_id: chatId,
+            text: `⏰ ТАЙМЕР: ${message}`,
+            parse_mode: 'HTML'
         })
     });
 

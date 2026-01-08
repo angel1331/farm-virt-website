@@ -47,6 +47,26 @@ function playAlarm() {
     }, 5000);
 }
 
+function sendTimerNotification(timerId) {
+    const user = JSON.parse(localStorage.getItem('tg_user'));
+
+    if(!user) {
+        alert('Вы не авторизованы. Уведомление в телеграм не придет.');
+        return;
+    }
+
+    fetch(`${BACKEND_URL}/notify`, {
+        method: 'POST',
+        headers: {
+            'Content-type': 'application/json'
+        },
+        body: JSON.stringify({
+            chatId: chatId,
+            message: `Таймер ${timerId} завершен!`
+        })
+    })
+}
+
 function tick(id) {
     const state = timerStates[id];
 
@@ -55,6 +75,7 @@ function tick(id) {
         state.totalSeconds = 0;
         updateDisplay(id);
         playAlarm();
+        sendTimerNotification();
         alert(`Время для таймера ${id} вышло!`);
         return;
     }
