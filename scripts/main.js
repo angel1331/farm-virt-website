@@ -55,13 +55,15 @@ function sendTimerNotification(timerId) {
         return;
     }
 
+    console.log(user.id);
+
     fetch(`${BACKEND_URL}/notify`, {
         method: 'POST',
         headers: {
-            'Content-type': 'application/json'
+            'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-            chatId: chatId,
+            chatId: user.id,
             message: `Таймер ${timerId} завершен!`
         })
     })
@@ -75,7 +77,7 @@ function tick(id) {
         state.totalSeconds = 0;
         updateDisplay(id);
         playAlarm();
-        sendTimerNotification();
+        sendTimerNotification(id);
         alert(`Время для таймера ${id} вышло!`);
         return;
     }

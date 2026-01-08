@@ -31,10 +31,10 @@ app.post('/auth/telegram', async (c) => {
 
 // Роут для уведомлений от таймеров
 app.post('/notify', async (c) => {
-    const { userId, message } = await c.req.json();
+    const { chatId, message } = await c.req.json();
     const botToken = c.env.BOT_TOKEN;
 
-    if (!userId) return c.json({ success: false, error: 'No user ID' }, 400);
+    if (!chatId) return c.json({ success: false, error: 'No user ID' }, 400);
 
     await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
         method: 'POST',
