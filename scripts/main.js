@@ -4,6 +4,12 @@ const INITIAL_TIMES = {
     '3': 5,
 };
 
+const TIMER_NAMES = {
+    1: 'Угон',
+    2: 'Бабочка',
+    3: 'Контрабанда'
+};
+
 const timerStates = {
     '1': { totalSeconds: INITIAL_TIMES['1'], intervalId: null },
     '2': { totalSeconds: INITIAL_TIMES['2'], intervalId: null },
@@ -50,12 +56,12 @@ function playAlarm() {
 function sendTimerNotification(timerId) {
     const user = JSON.parse(localStorage.getItem('tg_user'));
 
+    const name = TIMER_NAMES[Number(timerId)] || `Таймер ${timerId}`;
+
     if(!user) {
         alert('Вы не авторизованы. Уведомление в телеграм не придет.');
         return;
     }
-
-    console.log(user.id);
 
     fetch(`${BACKEND_URL}/notify`, {
         method: 'POST',
@@ -64,7 +70,7 @@ function sendTimerNotification(timerId) {
         },
         body: JSON.stringify({
             chatId: user.id,
-            message: `Таймер ${timerId} завершен!`
+            message: name
         })
     })
 }
@@ -78,7 +84,6 @@ function tick(id) {
         updateDisplay(id);
         playAlarm();
         sendTimerNotification(id);
-        alert(`Время для таймера ${id} вышло!`);
         return;
     }
 
