@@ -4,6 +4,7 @@ body {
     font-family: Arial, Helvetica, sans-serif;
     min-height: 100vh;
     display: flex;
+    overflow-x: hidden;
 }
 
 main {
@@ -40,6 +41,22 @@ aside {
     min-height: 100vh;
 }
 
+.hamburger-btn {
+    display: none;
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 1001;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 10px;
+}
+
+.hamburger-btn:hover {
+    opacity: 0.8;
+}
+
 .calculator {
     display: flex;
     align-items: center;
@@ -52,9 +69,11 @@ aside {
     border: 0;
     padding: 20px;
     flex-grow: 1;
-    min-width: 300px;
-    width: 120px;
+    min-width: 200px;
     border-radius: 4px;
+    background-color: rgba(255, 255, 255, 0.90);
+    color: #333;
+    box-sizing: border-box;
 }
 
 .file-input {
@@ -71,6 +90,7 @@ aside {
   border-radius: 4px;
   cursor: pointer; 
   transition: background-color 0.3s;
+  white-space: nowrap;
 
   &:hover {
     background-color: #0056b3;
@@ -86,15 +106,19 @@ aside {
 
 .file-name {
     color: white;
+    font-size: 14px;
+    word-break: break-all;
 }
 
 .input-calculator-number {
     border: 0;
     padding: 20px;
-    width: 150px;
+    width: 120px;
     border-radius: 3px;
-    margin-right: 10px;
     outline: none;
+    background-color: rgba(255, 255, 255, 0.90);
+    color: #333;
+    box-sizing: border-box;
 }
 
 .button-calculate {
@@ -103,9 +127,9 @@ aside {
     color: white;
     border-radius: 3px;
     font-weight: bold;
-    margin-left: 30px;
-    padding: 20px 20px 20px 20px;
+    padding: 20px 30px;
     transition: background-color 0.3s;
+    white-space: nowrap;
 
     &:hover {
         background-color: rgba(0, 128, 0, 0.671);
@@ -120,9 +144,9 @@ aside {
     border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 5px;
     margin-top: 20px;
-    padding: 10px;
+    padding: 20px;
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 20px;
     justify-items: center;
 }
@@ -150,25 +174,29 @@ aside {
 
 .stat-text-label {
     color: white;
-    font-size: 20px;
+    font-size: 16px;
+    text-align: center;
 }
 
 .income {
     color: green;
     font-weight: bold;
     font-size: 20px;
+    text-align: center;
 }
 
 .expenses {
     color: red;
     font-weight: bold;
     font-size: 20px;
+    text-align: center;
 }
 
 .clean-income-expenses {
     color: white;
     font-weight: bold;
     font-size: 20px;
+    text-align: center;
 }
 
 .history-container {
@@ -198,11 +226,11 @@ aside {
 
 .button-container {
     display: flex;
-    justify-content: right;
+    justify-content: flex-end;
+    gap: 10px;
 }
 
 .delete-btn {
-    margin-left: 20px;
     background-color: red;
     border: 0;
     color: white;
@@ -234,8 +262,6 @@ aside {
     }
 }
 
-
-
 footer {
     background-color: #161819;
     border-top: 1px solid rgba(255, 255, 255, 0.05);
@@ -252,4 +278,103 @@ footer {
 
 .сopyright {
     text-align: center;
+}
+
+@media (max-width: 768px) {
+    main {
+        padding: 15px;
+    }
+
+    .content-wrapper {
+        margin-left: 0;
+    }
+
+    .hamburger-btn {
+        display: flex !important;
+    }
+
+    .calculator {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+    }
+
+    .input-calculator-number {
+        width: 100%;
+        padding: 15px;
+        font-size: 16px;
+    }
+
+    .input-calculator {
+        width: 100%;
+        min-width: auto;
+        padding: 15px;
+        font-size: 16px;
+    }
+
+    .file-upload {
+        margin-left: 0;
+        flex-direction: column;
+        width: 100%;
+        gap: 10px;
+    }
+
+    .file-label {
+        width: 100%;
+        padding: 15px;
+        text-align: center;
+        margin: 0;
+        box-sizing: border-box;
+    }
+
+    .file-name {
+        width: 100%;
+        padding: 10px 15px;
+        background-color: rgba(255, 255, 255, 0.1);
+        border-radius: 4px;
+        text-align: center;
+    }
+
+    .button-calculate {
+        width: 100%;
+        padding: 15px;
+        font-size: 16px;
+    }
+
+    .statistics-container {
+        grid-template-columns: 1fr;
+        gap: 15px;
+        padding: 15px;
+    }
+
+    .stat-text-label {
+        font-size: 14px;
+    }
+
+    .income,
+    .expenses,
+    .clean-income-expenses {
+        font-size: 18px;
+    }
+
+    .history-item {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .record-el {
+        font-size: 26px;
+    }
+
+    .button-container {
+        justify-content: stretch;
+        gap: 10px;
+        width: 100%;
+    }
+
+    .delete-btn,
+    .edit-btn {
+        flex: 1;
+        font-size: 14px;
+    }
 }

@@ -1,15 +1,18 @@
-const hamburgerBtn = document.querySelector('.hamburger-btn');
-const sideBar = document.querySelector('aside');
-const menuItems = document.querySelectorAll('.sidebar a');
+const hamburgerBtn = document.getElementById('hamburger-toggle');
+const sidebar = document.getElementById('sidebar');
 
 hamburgerBtn.addEventListener('click', () => {
-    sideBar.classList.toggle('active');
+    sidebar.classList.toggle('active');
+});
 
-    hamburgerBtn.classList.toggle('open');
-})
-
-menuItems.forEach(item => {
-    item.addEventListener('click', () => {
+document.querySelectorAll('.nav-url-container').forEach(link => {
+    link.addEventListener('click', () => {
         sidebar.classList.remove('active');
     });
+});
+
+document.addEventListener('click', (e) => {
+    if (!sidebar.contains(e.target) && !hamburgerBtn.contains(e.target)) {
+        sidebar.classList.remove('active');
+    }
 });

@@ -145,8 +145,8 @@
             const colorStyle = record.type === 'expense' ? 'red' : 'green';
 
             const valueDisplay = record.type === 'expense' ?
-            `<p style="color:red">${record.value}</p>` :
-            `<p style="color:green">+${record.value}</p>`
+            `<p class="record-el" style="color:red">${record.value}</p>` :
+            `<p class="record-el" style="color:green">+${record.value}</p>`
             
             const imageHTML = record.imageUrl ?
             `<img src="${record.imageUrl}" style="width: auto; height: 50px; margin-right: 10px;">` : '';

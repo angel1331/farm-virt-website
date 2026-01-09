@@ -15,65 +15,6 @@ main {
     display: flex;
 }
 
-aside {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    height: 100vh;
-}
-
-.aside-top {
-    display: flex;
-    flex-direction: column;
-}
-
-.hamburger-btn {
-    height: 32px;
-    width: 32px;
-    display: none;
-    background: none;
-    border: 0;
-    cursor: pointer;
-    padding: 10px;
-    z-index: 1000;
-    position: fixed;
-    top: 10px;
-    left: 10px;
-}
-
-.hamburger-icon {
-    height: 32px;
-    width: 32px;
-    transition: 0.3s;
-}
-
-@media (max-width: 768px) {
-    .hamburger-btn {
-        display: flex;
-    }
-
-    aside {
-        position: fixed;
-        left: -210px;
-        top: 0;
-        width: 250px;
-        height: 100%;
-        transition: 0.3s;
-        z-index: 999;
-        background-color: #1a1a1a;
-    }
-
-    aside.active {
-        left: 0;
-    }
-}
-
-.auth {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 10px;
-}
-
 .content-wrapper {
     margin-left: 280px;
     flex-grow: 1;
@@ -82,9 +23,26 @@ aside {
     min-height: 100vh;
 }
 
+.hamburger-btn {
+    display: none;
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 1001;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 10px;
+}
+
+.hamburger-btn:hover {
+    opacity: 0.8;
+}
+
 .clocks {
     display: flex;
     justify-content: space-between;
+    gap: 20px;
 }
 
 .timer {
@@ -96,6 +54,7 @@ aside {
     border: 1px solid rgba(255, 255, 255, 0.2);
     padding: 20px;
     border-radius: 5px;
+    flex: 1;
 }
 
 .timer-control {
@@ -115,7 +74,7 @@ aside {
 }
 
 .start {
-    padding: 10px 30px;
+    padding: 10px 20px;
     background-color: green;
     border: 0;
     color: white;
@@ -134,7 +93,7 @@ aside {
 }
 
 .stop {
-    padding: 10px 30px;
+    padding: 10px 20px;
     background-color: red;
     border: 0;
     color: white;
@@ -153,7 +112,7 @@ aside {
 }
 
 .reset {
-    padding: 10px 30px;
+    padding: 10px 20px;
     background-color: blue;
     border: 0;
     color: white;
@@ -298,4 +257,58 @@ footer {
 
 .сopyright {
     text-align: center;
+}
+
+@media (max-width: 768px) {
+    main {
+        padding: 20px;
+    }
+
+    .content-wrapper {
+        margin-left: 0;
+    }
+
+    .hamburger-btn {
+        display: flex !important;
+    }
+
+    .clocks {
+        flex-direction: column;
+    }
+
+    .timer {
+        padding: 15px;
+    }
+
+    .to-do-list {
+        flex-direction: column;
+        max-width: 100%;
+    }
+
+    .to-do-input,
+    .to-do-date-input {
+        width: 99%;
+        margin-bottom: 5px;
+    }
+
+    .to-do-date-input {
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+    .task {
+        flex-wrap: wrap;
+        width: 100%;
+        padding: 0;
+    }
+
+    .task-text {
+        margin-right: 10px;
+        margin-left: 10px;
+    }
+
+    .tasks {
+        margin-left: 0;
+
+    }
 }

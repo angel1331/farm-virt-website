@@ -1,3 +1,40 @@
+aside {
+    width: 280px;
+    background-color: #121417;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+    position: fixed;
+    height: 100vh;
+    z-index: 1000;
+}
+
+.aside-top {
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
+.hamburger-btn {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 10px;
+    align-items: center;
+    justify-content: center;
+}
+
+.logo {
+    height: 50px;
+}
+
+.logo-container {
+    padding: 30px 20px;
+    text-align: center;
+}
+
 .nav-url-container {
     display: flex;
     align-items: center;
@@ -27,21 +64,29 @@
     color: white;
 }
 
-aside {
-    width: 280px;
-    background-color: #121417;
+.auth {
     display: flex;
-    flex-direction: column;
-    border-right: 1px solid rgba(255, 255, 255, 0.1);
-    position: fixed;
-    height: 100vh;
+    justify-content: center;
+    padding: 15px 10px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.logo{
-    height: 50px;
-}
+@media (max-width: 768px) {
+    .hamburger-btn {
+        display: flex !important;
+    }
 
-.logo-container {
-    padding: 30px 20px;
-    text-align: center;
+    aside {
+        position: fixed;
+        left: -280px;
+        top: 0;
+        width: 280px;
+        height: 100vh;
+        transition: left 0.3s ease;
+        z-index: 1000;
+    }
+
+    aside.active {
+        left: 0;
+    }
 }
