@@ -1,271 +1,292 @@
-    let income = Number(localStorage.getItem('income') ?? 0);
-    let expenses = Number(localStorage.getItem('expenses') ?? 0);
+import { syncDataToServer } from "./main-toDoList.js";
 
-    let historyRecords = JSON.parse(localStorage.getItem('historyRecords')) || [];
+let income = Number(localStorage.getItem('income') ?? 0);
+let expenses = Number(localStorage.getItem('expenses') ?? 0);
 
-    let editingRecordId = null; 
+let historyRecords = JSON.parse(localStorage.getItem('historyRecords')) || [];
 
-    function getCurrentDateTime() {
-        const today = new Date();
-        const day = String(today.getDate()).padStart(2, '0');
-        const month = String(today.getMonth() + 1).padStart(2, '0');
-        const year = today.getFullYear();
-        const hour = String(today.getHours()).padStart(2, '0');
-        const minutes = String(today.getMinutes()).padStart(2, '0');
-        return `${day}/${month}/${year} ${hour}:${minutes}`;
+let editingRecordId = null; 
+
+async function uploadToR2(file) {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+        const response = await fetch(`${BACKEND_URL}/upload`, {
+            method: 'POST',
+            body: formData
+        });
+        const data = await response.json();
+        return data.success ? data.url : null;
+    } catch (e) {
+        console.error("Ошибка загрузки картинки:", e);
+        return null;
+    }
+}
+
+function getCurrentDateTime() {
+    const today = new Date();
+    const day = String(today.getDate()).padStart(2, '0');
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const year = today.getFullYear();
+    const hour = String(today.getHours()).padStart(2, '0');
+    const minutes = String(today.getMinutes()).padStart(2, '0');
+    return `${day}/${month}/${year} ${hour}:${minutes}`;
+}
+
+
+const getInputs = () => ({
+    inputNumber: document.querySelector('.input-calculator-number'),
+    inputComments: document.querySelector('.input-calculator'),
+    inputImage: document.getElementById('real-input'),
+    calculateButton: document.querySelector('.button-calculate')
+});
+
+function saveToStorage() {
+    localStorage.setItem('income', income);
+    localStorage.setItem('expenses', expenses);
+    localStorage.setItem('historyRecords', JSON.stringify(historyRecords));
+}
+
+function generateUUID() {
+    const template = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx';
+    const uuid = template.replace(/[xy]/g, function(placeholderCharacter) {
+        const randomNumber = Math.floor(Math.random() * 16);
+        
+        let finalValue;
+
+        if(placeholderCharacter === 'x') {
+            finalValue = randomNumber;
+        } else {
+            finalValue = (randomNumber & 0x3) | 0x8;
+        }
+
+        return finalValue.toString(16);
+    })
+    return uuid;
+}
+
+function deleteRecord(recordId) {
+    const recordToDelete = historyRecords.find(record => record.id === recordId);
+
+    if(!recordToDelete) {
+        return;
     }
 
+    if(recordToDelete.imageUrl) {
+        URL.revokeObjectURL(recordToDelete.imageUrl);
+    }
 
-    const getInputs = () => ({
-        inputNumber: document.querySelector('.input-calculator-number'),
-        inputComments: document.querySelector('.input-calculator'),
-        inputImage: document.getElementById('real-input'),
-        calculateButton: document.querySelector('.button-calculate')
+    if(recordToDelete.type === 'income') {
+        income -= recordToDelete.value;
+    } else {
+        expenses -= recordToDelete.value;
+    }
+
+    historyRecords = historyRecords.filter(record => record.id !== recordId);
+
+    saveToStorage();
+    renderPage();
+    syncDataToServer();
+}
+
+function startEdit(recordId) {
+    const recordToEdit = historyRecords.find(record => record.id === recordId);
+
+    if(!recordToEdit) {
+        return;
+    }
+
+    editingRecordId = recordId;
+
+    const { inputNumber, inputComments, calculateButton } = getInputs();
+
+    inputNumber.value = Math.abs(recordToEdit.value);
+    inputComments.value = recordToEdit.comment;
+
+    calculateButton.textContent = "Сохранить изменения";
+}
+
+function updateExistingRecord(id, inputValue, newComment, newImageUrl) {
+    const index = historyRecords.findIndex(record => record.id === id);
+    if(index === -1) {
+        return;
+    }
+
+    const oldRecord = historyRecords[index];
+
+    let finalNewValue = inputValue;
+
+    if(oldRecord.type === 'expense') {
+        finalNewValue = -Math.abs(inputValue);
+    } else {
+        finalNewValue = Math.abs(inputValue);
+    }
+
+    if (oldRecord.type === 'income') {
+    income -= oldRecord.value;
+    } else {
+        expenses -= oldRecord.value;
+    }
+
+    if (oldRecord.imageUrl) {
+        URL.revokeObjectURL(oldRecord.imageUrl);
+    }
+
+    const newRecord = {
+        id: id,
+        value: finalNewValue,
+        comment: newComment,
+        imageUrl: newImageUrl,
+        type: finalNewValue < 0 ? 'expense' : 'income',
+        date: getCurrentDateTime()
+    }
+
+    historyRecords[index] = newRecord;
+
+    if(finalNewValue < 0) {
+        expenses += finalNewValue;
+    } else {
+        income += finalNewValue;
+    }
+}
+
+function renderPage() {
+    const incomeStat = document.querySelector('.income');
+    const expensesStat = document.querySelector('.expenses');
+    const cleanIncomeExpensesStat = document.querySelector('.clean-income-expenses');
+    const history = document.querySelector('.history-container');
+
+    let historyHTML = '';
+
+    historyRecords.forEach(record => {
+        const borderClass = record.type === 'expense' ? 'red-border' : 'green-border';
+
+        const colorStyle = record.type === 'expense' ? 'red' : 'green';
+
+        const valueDisplay = record.type === 'expense' ?
+        `<p class="record-el" style="color:red">${record.value}</p>` :
+        `<p class="record-el" style="color:green">+${record.value}</p>`
+        
+        const imageHTML = record.imageUrl ?
+        `<img src="${record.imageUrl}" style="width: auto; height: 50px; margin-right: 10px;">` : '';
+
+        historyHTML += `
+            <div class="history-item ${borderClass}">
+                ${imageHTML}
+                ${valueDisplay}
+                <div class="comment-container">
+                    <span class="comment" style="margin-left: 5px;">${record.comment || "Без комментария"}</span>
+                </div>
+                <p class="date-history">${record.date}</p>
+                <div class="button-container">
+                    <button class="edit-btn" data-id="${record.id}">Редактировать запись</button>
+                    <button class="delete-btn" data-id="${record.id}">Удалить запись</button>
+                </div>
+            </div>
+        `;
+
+        const historyItem = document.querySelectorAll('.history-item');
     });
 
-    function saveToStorage() {
-        localStorage.setItem('income', income);
-        localStorage.setItem('expenses', expenses);
-        localStorage.setItem('historyRecords', JSON.stringify(historyRecords));
+    if (history) {
+        history.innerHTML = historyHTML;
     }
 
-    function generateUUID() {
-        const template = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx';
-        const uuid = template.replace(/[xy]/g, function(placeholderCharacter) {
-            const randomNumber = Math.floor(Math.random() * 16);
-            
-            let finalValue;
+    if (incomeStat && expensesStat && cleanIncomeExpensesStat) {
+        const netValue = income + expenses;
 
-            if(placeholderCharacter === 'x') {
-                finalValue = randomNumber;
-            } else {
-                finalValue = (randomNumber & 0x3) | 0x8;
-            }
+        const netValueSign = netValue >= 0 ? '+$' : '-$';
+        const netValueColor = netValue >= 0 ? 'green' : 'red';
 
-            return finalValue.toString(16);
+        incomeStat.innerHTML = `<p>+$${income}</p>`;
+        expensesStat.innerHTML = `<p>-$${Math.abs(expenses)}</p>`;
+        cleanIncomeExpensesStat.innerHTML = `<p style="color: ${netValueColor};">${netValueSign}${Math.abs(netValue)}</p>`
+    }
+
+    const deleteButtons = document.querySelectorAll('.delete-btn');
+
+    deleteButtons.forEach(button => {
+        button.addEventListener('click', (event) => {
+            const recordId = event.currentTarget.dataset.id;
+
+            deleteRecord(recordId);
         })
-        return uuid;
+    })
+
+    const editButtons = document.querySelectorAll('.edit-btn');
+
+    editButtons.forEach(button => {
+        button.addEventListener('click', (event) => {
+            const recordId = event.currentTarget.dataset.id;
+
+            startEdit(recordId);
+        })
+    })
+}
+
+renderPage();
+
+document.querySelector('.button-calculate').addEventListener('click', async () => {
+    const { inputNumber, inputComments, inputImage, calculateButton } = getInputs();
+
+    const inputNumberValue = Number(inputNumber.value);
+    const inputCommentsValue = inputComments.value;
+    const files = inputImage.files;
+
+    let imageUrl = '';
+    
+    if (files.length > 0) {
+        imageUrl = await uploadToR2(files[0]); 
     }
 
-    function deleteRecord(recordId) {
-        const recordToDelete = historyRecords.find(record => record.id === recordId);
+    let finalValue = inputNumberValue;
 
-        if(!recordToDelete) {
-            return;
-        }
+    if(editingRecordId !== null) {
+        updateExistingRecord(editingRecordId, inputNumberValue, inputCommentsValue, imageUrl);
 
-        if(recordToDelete.imageUrl) {
-            URL.revokeObjectURL(recordToDelete.imageUrl);
-        }
+        editingRecordId = null;
+        calculateButton.textContent = 'Записать'
+    } else {
+        finalValue = inputNumberValue;
 
-        if(recordToDelete.type === 'income') {
-            income -= recordToDelete.value;
-        } else {
-            expenses -= recordToDelete.value;
-        }
-
-        historyRecords = historyRecords.filter(record => record.id !== recordId);
-
-        saveToStorage();
-        renderPage();
-    }
-
-    function startEdit(recordId) {
-        const recordToEdit = historyRecords.find(record => record.id === recordId);
-
-        if(!recordToEdit) {
-            return;
-        }
-
-        editingRecordId = recordId;
-
-        const { inputNumber, inputComments, calculateButton } = getInputs();
-
-        inputNumber.value = Math.abs(recordToEdit.value);
-        inputComments.value = recordToEdit.comment;
-
-        calculateButton.textContent = "Сохранить изменения";
-    }
-
-    function updateExistingRecord(id, inputValue, newComment, newImageUrl) {
-        const index = historyRecords.findIndex(record => record.id === id);
-        if(index === -1) {
-            return;
-        }
-
-        const oldRecord = historyRecords[index];
-
-        let finalNewValue = inputValue;
-
-        if(oldRecord.type === 'expense') {
-            finalNewValue = -Math.abs(inputValue);
-        } else {
-            finalNewValue = Math.abs(inputValue);
-        }
-
-        if (oldRecord.type === 'income') {
-        income -= oldRecord.value;
-        } else {
-            expenses -= oldRecord.value;
-        }
-
-        if (oldRecord.imageUrl) {
-            URL.revokeObjectURL(oldRecord.imageUrl);
-        }
-
-        const newRecord = {
-            id: id,
-            value: finalNewValue,
-            comment: newComment,
-            imageUrl: newImageUrl,
-            type: finalNewValue < 0 ? 'expense' : 'income',
+        const record = {
+            value: finalValue,
+            id: generateUUID(),
+            comment: inputCommentsValue,
+            imageUrl: imageUrl,
+            type: finalValue < 0 ? 'expense' : 'income',
             date: getCurrentDateTime()
-        }
+        };
 
-        historyRecords[index] = newRecord;
+        historyRecords.push(record);
 
-        if(finalNewValue < 0) {
-            expenses += finalNewValue;
+        if (finalValue < 0) {
+        expenses += finalValue;
         } else {
-            income += finalNewValue;
+            income += finalValue;
         }
-    }
-
-    function renderPage() {
-        const incomeStat = document.querySelector('.income');
-        const expensesStat = document.querySelector('.expenses');
-        const cleanIncomeExpensesStat = document.querySelector('.clean-income-expenses');
-        const history = document.querySelector('.history-container');
-
-        let historyHTML = '';
-
-        historyRecords.forEach(record => {
-            const borderClass = record.type === 'expense' ? 'red-border' : 'green-border';
-
-            const colorStyle = record.type === 'expense' ? 'red' : 'green';
-
-            const valueDisplay = record.type === 'expense' ?
-            `<p class="record-el" style="color:red">${record.value}</p>` :
-            `<p class="record-el" style="color:green">+${record.value}</p>`
-            
-            const imageHTML = record.imageUrl ?
-            `<img src="${record.imageUrl}" style="width: auto; height: 50px; margin-right: 10px;">` : '';
-
-            historyHTML += `
-                <div class="history-item ${borderClass}">
-                    ${imageHTML}
-                    ${valueDisplay}
-                    <div class="comment-container">
-                        <span class="comment" style="margin-left: 5px;">${record.comment || "Без комментария"}</span>
-                    </div>
-                    <p class="date-history">${record.date}</p>
-                    <div class="button-container">
-                        <button class="edit-btn" data-id="${record.id}">Редактировать запись</button>
-                        <button class="delete-btn" data-id="${record.id}">Удалить запись</button>
-                    </div>
-                </div>
-            `;
-
-            const historyItem = document.querySelectorAll('.history-item');
-        });
-
-        if (history) {
-            history.innerHTML = historyHTML;
-        }
-
-        if (incomeStat && expensesStat && cleanIncomeExpensesStat) {
-            const netValue = income + expenses;
-
-            const netValueSign = netValue >= 0 ? '+$' : '-$';
-            const netValueColor = netValue >= 0 ? 'green' : 'red';
-
-            incomeStat.innerHTML = `<p>+$${income}</p>`;
-            expensesStat.innerHTML = `<p>-$${Math.abs(expenses)}</p>`;
-            cleanIncomeExpensesStat.innerHTML = `<p style="color: ${netValueColor};">${netValueSign}${Math.abs(netValue)}</p>`
-        }
-
-        const deleteButtons = document.querySelectorAll('.delete-btn');
-
-        deleteButtons.forEach(button => {
-            button.addEventListener('click', (event) => {
-                const recordId = event.currentTarget.dataset.id;
-
-                deleteRecord(recordId);
-            })
-        })
-
-        const editButtons = document.querySelectorAll('.edit-btn');
-
-        editButtons.forEach(button => {
-            button.addEventListener('click', (event) => {
-                const recordId = event.currentTarget.dataset.id;
-
-                startEdit(recordId);
-            })
-        })
     }
 
     renderPage();
 
-    document.querySelector('.button-calculate').addEventListener('click', () => {
-        const { inputNumber, inputComments, inputImage, calculateButton } = getInputs();
+    const imagePreview = document.getElementById('imagePreview')
 
-        const inputNumberValue = Number(inputNumber.value);
-        const inputCommentsValue = inputComments.value;
-        const files = inputImage.files;
+    finalValue.value = '';
+    inputNumber.value = '';
+    inputComments.value = '';
+    inputImage.value = '';
+    document.querySelector('.file-name').textContent = 'Файл не выбран';
 
-        let imageUrl = '';
-        
-        if (files.length > 0 && files[0].type.startsWith('image/')) {
-            imageUrl = URL.createObjectURL(files[0]);
-        }
+    saveToStorage();
+    syncDataToServer();
+})
 
-        let finalValue = inputNumberValue;
-
-        if(editingRecordId !== null) {
-            updateExistingRecord(editingRecordId, inputNumberValue, inputCommentsValue, imageUrl);
-
-            editingRecordId = null;
-            calculateButton.textContent = 'Записать'
-        } else {
-            finalValue = inputNumberValue;
-
-            const record = {
-                value: finalValue,
-                id: generateUUID(),
-                comment: inputCommentsValue,
-                imageUrl: imageUrl,
-                type: finalValue < 0 ? 'expense' : 'income',
-                date: getCurrentDateTime()
-            };
-
-            historyRecords.push(record);
-
-            if (finalValue < 0) {
-            expenses += finalValue;
-            } else {
-                income += finalValue;
-            }
-        }
-
-        renderPage();
-
-        const imagePreview = document.getElementById('imagePreview')
-
-        finalValue.value = '';
-        inputNumber.value = '';
-        inputComments.value = '';
-        inputImage.value = '';
-        document.querySelector('.file-name').textContent = 'Файл не выбран';
-
-        saveToStorage();
-    })
-
-    document.getElementById('real-input').addEventListener('change', (e) => {
-        const fileNameDisplay = document.querySelector('.file-name');
-        if (e.target.files && e.target.files.length > 0) {
-            fileNameDisplay.textContent = e.target.files[0].name;
-        } else {
-            fileNameDisplay.textContent = 'Файл не выбран';
-        }
-    })
+document.getElementById('real-input').addEventListener('change', (e) => {
+    const fileNameDisplay = document.querySelector('.file-name');
+    if (e.target.files && e.target.files.length > 0) {
+        fileNameDisplay.textContent = e.target.files[0].name;
+    } else {
+        fileNameDisplay.textContent = 'Файл не выбран';
+    }
+})

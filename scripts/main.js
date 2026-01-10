@@ -1,3 +1,5 @@
+const BACKEND_URL = 'https://farm-money-api.rakashev39.workers.dev';
+
 const INITIAL_TIMES = {
     '1': 5,
     '2': 5,

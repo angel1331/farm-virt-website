@@ -274,6 +274,7 @@ footer {
 
     .clocks {
         flex-direction: column;
+        margin-top: 50px;
     }
 
     .timer {
