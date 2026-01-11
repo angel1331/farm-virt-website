@@ -89,7 +89,7 @@ export async function loadUserData(userId) {
 }
 
 if (addBtn) {
-    addBtn.querySelector('.to-do-add-btn').addEventListener('click', () => {
+    addBtn.addEventListener('click', () => {
         const inputText = document.querySelector('.to-do-input');
         const inputDate = document.querySelector('.to-do-date-input');
         const inputTextValue = inputText.value;
@@ -117,7 +117,7 @@ if (addBtn) {
 }
 
 if(listContainer) {
-    listContainer.querySelector('.to-do-list-container').addEventListener('click', (e) => {
+    listContainer.addEventListener('click', (e) => {
         const taskEl = e.target.closest('.task');
         
         if(!taskEl) return;

@@ -7,6 +7,8 @@ let historyRecords = JSON.parse(localStorage.getItem('historyRecords')) || [];
 
 let editingRecordId = null; 
 
+const BACKEND_URL = 'https://farm-money-api.rakashev39.workers.dev';
+
 async function uploadToR2(file) {
     const formData = new FormData();
     formData.append('file', file);
@@ -272,7 +274,6 @@ document.querySelector('.button-calculate').addEventListener('click', async () =
 
     const imagePreview = document.getElementById('imagePreview')
 
-    finalValue.value = '';
     inputNumber.value = '';
     inputComments.value = '';
     inputImage.value = '';
