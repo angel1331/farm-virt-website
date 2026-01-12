@@ -117,6 +117,10 @@ function updateExistingRecord(id, inputValue, newComment, newImageUrl) {
 
     const oldRecord = historyRecords[index];
 
+    if (oldRecord.imageUrl && oldRecord.imageUrl !== newImageUrl && oldRecord.imageUrl.startsWith('blob:')) {
+        URL.revokeObjectURL(oldRecord.imageUrl);
+    }
+
     let finalNewValue = inputValue;
 
     if(oldRecord.type === 'expense') {
@@ -129,10 +133,6 @@ function updateExistingRecord(id, inputValue, newComment, newImageUrl) {
     income -= oldRecord.value;
     } else {
         expenses -= oldRecord.value;
-    }
-
-    if (oldRecord.imageUrl) {
-        URL.revokeObjectURL(oldRecord.imageUrl);
     }
 
     const newRecord = {
@@ -151,6 +151,10 @@ function updateExistingRecord(id, inputValue, newComment, newImageUrl) {
     } else {
         income += finalNewValue;
     }
+
+    saveToStorage();
+
+    syncDataToServer();
 }
 
 function renderPage() {
@@ -221,7 +225,6 @@ function renderPage() {
     editButtons.forEach(button => {
         button.addEventListener('click', (event) => {
             const recordId = event.currentTarget.dataset.id;
-
             startEdit(recordId);
         })
     })
@@ -237,19 +240,27 @@ document.querySelector('.button-calculate').addEventListener('click', async () =
     const files = inputImage.files;
 
     let imageUrl = '';
-    
-    if (files.length > 0) {
-        imageUrl = await uploadToR2(files[0]); 
-    }
 
     let finalValue = inputNumberValue;
 
     if(editingRecordId !== null) {
-        updateExistingRecord(editingRecordId, inputNumberValue, inputCommentsValue, imageUrl);
+        const oldRecord = historyRecords.find(r => r.id === editingRecordId);
 
+        if (files.length > 0) {
+            imageUrl = await uploadToR2(files[0]); 
+        } else {
+            imageUrl = oldRecord ? oldRecord.imageUrl : '';
+        }
+
+        updateExistingRecord(editingRecordId, inputNumberValue, inputCommentsValue, imageUrl);
         editingRecordId = null;
         calculateButton.textContent = 'Записать'
     } else {
+
+        if (files.length > 0) {
+            imageUrl = await uploadToR2(files[0]);
+        }
+
         finalValue = inputNumberValue;
 
         const record = {
@@ -270,9 +281,7 @@ document.querySelector('.button-calculate').addEventListener('click', async () =
         }
     }
 
-    renderPage();
-
-    const imagePreview = document.getElementById('imagePreview')
+    const imagePreview = document.getElementById('imagePreview');
 
     inputNumber.value = '';
     inputComments.value = '';
@@ -280,6 +289,7 @@ document.querySelector('.button-calculate').addEventListener('click', async () =
     document.querySelector('.file-name').textContent = 'Файл не выбран';
 
     saveToStorage();
+    renderPage();
     syncDataToServer();
 })
 
